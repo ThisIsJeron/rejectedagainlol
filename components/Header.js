@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
       <Link href="/">
-        <span className="text-xl font-bold cursor-pointer">Website Title</span> {/* Styling for the title */}
+        <span className="text-xl font-bold cursor-pointer">RejectedAGAIN.lol</span> {/* Styling for the title */}
       </Link>
       <nav>
         <Link href="/upload">
