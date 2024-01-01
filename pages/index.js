@@ -1,22 +1,21 @@
-import Head from 'next/head'
-import Header from '@components/Header'
-import Footer from '@components/Footer'
+import React from 'react';
+import Header from '../components/Header';
 
-export default function Home() {
+const Home = () => {
   return (
-    <div className="container">
-      <Head>
-        <title>Next.js Starter!</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div>
+      <Header />
+      <div className="container mx-auto mt-8">
+        {/* Example Post - You'll replace this with dynamic content */}
+        <div className="mb-6 p-4 border-b border-gray-200">
+          <h2 className="text-2xl font-bold mb-2">Post Title</h2>
+          <p className="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        </div>
 
-      <main>
-        <Header title="Welcome to my app!" />
-        <h1>Rejected Again?</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </main>
-
-      <Footer />
+        {/* Repeat similar blocks for other posts */}
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default Home;

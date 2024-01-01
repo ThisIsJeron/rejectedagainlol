@@ -1,10 +1,23 @@
 import React from 'react';
-export default function Header({ title }) {
+import Link from 'next/link';
+
+
+const Header = () => {
   return (
-    <div>
-      <h1 className="title">rejectedagain.lol</h1>
-      <button>Upload</button>
-      <button>Login</button>
-    </div>
+    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
+      <Link href="/">
+        <span className="text-xl font-bold cursor-pointer">Website Title</span> {/* Styling for the title */}
+      </Link>
+      <nav>
+        <Link href="/upload">
+          <span className="text-lg hover:text-gray-300 mr-4 cursor-pointer">Upload</span> {/* Styling for navigation links */}
+        </Link>
+        <Link href="/login">
+          <span className="text-lg hover:text-gray-300 cursor-pointer">Login</span> {/* Styling for navigation links */}
+        </Link>
+      </nav>
+    </header>
   );
-}
+};
+
+export default Header;
