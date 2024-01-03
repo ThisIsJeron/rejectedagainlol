@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { supabase } from '../lib/supabase';
 
-
-
-
 const Upload = () => {
     const [uploadType, setUploadType] = useState('text');
     const [text, setText] = useState('');
@@ -81,12 +78,12 @@ const Upload = () => {
 
       // Insert record into 'uploads' table
       await supabase.from('uploads').insert([
-        { title: text, institution: '', user_id: user.id, file_path: filePath, content_type: 'image' },
+        { title: text, institution: text, user_id: user.id, file_path: filePath, content_type: 'image' },
       ]);
     } else if (uploadType === 'text') {
       // Handle text upload
       await supabase.from('uploads').insert([
-        { title: text, institution: '', user_id: user.id, content: text, content_type: 'text' },
+        { title: text, institution: text, user_id: user.id, content: text, content_type: 'text' },
       ]);
     }
 
@@ -101,8 +98,31 @@ const Upload = () => {
       <Header />
       <div className="min-h-screen bg-green-500 flex flex-col items-center pt-8">
         <div className="w-full max-w-2xl bg-white p-8 rounded shadow-md">
-          {/* ... toggle and other existing code */}
-
+          <div className="flex mb-4">
+            <label className="flex items-center mr-4">
+              <input 
+                type="radio" 
+                name="uploadType" 
+                value="text" 
+                checked={uploadType === 'text'} 
+                onChange={() => setUploadType('text')}
+                className="form-radio h-4 w-4 text-green-600"
+              />
+              <span className="ml-2">Text</span>
+            </label>
+            <label className="flex items-center">
+              <input 
+                type="radio" 
+                name="uploadType" 
+                value="image" 
+                checked={uploadType === 'image'} 
+                onChange={() => setUploadType('image')} 
+                className="form-radio h-4 w-4 text-green-600"
+              />
+              <span className="ml-2">Image</span>
+            </label>
+          </div>
+  
           <input
             type="text"
             value={institution}
@@ -110,14 +130,14 @@ const Upload = () => {
             placeholder="Institution Name"
             className="w-full p-2 mb-4 border border-gray-300 rounded"
           />
-
+  
           <input
             type="date"
             value={date}
             onChange={handleDateChange}
             className="w-full p-2 mb-4 border border-gray-300 rounded"
           />
-
+  
           {uploadType === 'text' ? (
             <textarea
               value={text}
@@ -139,7 +159,7 @@ const Upload = () => {
               />
             </div>
           )}
-
+  
           <button
             onClick={handleUpload}
             className="w-full bg-green-400 hover:bg-green-600 text-white font-bold py-3 px-4 rounded"
@@ -149,7 +169,7 @@ const Upload = () => {
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default Upload;
