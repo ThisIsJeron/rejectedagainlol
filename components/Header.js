@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '../utils/supabase'; // Adjust the path based on your file structure
+import { supabase } from '../lib/supabase'; // Adjust the path based on your file structure
 
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);

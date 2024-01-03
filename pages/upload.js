@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../lib/supabase';
 
 const Upload = () => {
   const [uploadType, setUploadType] = useState('text');
