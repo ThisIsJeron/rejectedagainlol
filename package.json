@@ -8,6 +8,7 @@
     "export": "next export"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.2",
     "cypress": "^13.4.0",
     "next": "^14.0.1",
     "react": "^18.2.0",
