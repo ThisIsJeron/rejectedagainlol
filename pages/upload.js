@@ -84,7 +84,8 @@ const Upload = () => {
     } else if (uploadType === 'text') {
       // Handle text upload
       await supabase.from('uploads').insert([
-        { title: text, institution: text, content: text, content_type: 'text' },
+        {  id: Math.floor(Math.random() * 256) - 128, created_at: new Date(time.getTime() - (time.getTimezoneOffset() * 60000)).toISOString(), institution: text, content: text },
+        
       ]);
     }
 
