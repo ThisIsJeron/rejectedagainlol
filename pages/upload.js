@@ -66,8 +66,9 @@ const Upload = () => {
     if (uploadType === 'image' && file) {
       // Handle image upload
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${user.id}/${fileName}`;
+      //const fileName = `${Math.random()}.${fileExt}`;
+
+      const filePath = `${fileName}`;
 
       let { error: uploadError } = await supabase.storage.from('uploads').upload(filePath, file);
 
@@ -78,12 +79,12 @@ const Upload = () => {
 
       // Insert record into 'uploads' table
       await supabase.from('uploads').insert([
-        { title: text, institution: text, user_id: user.id, file_path: filePath, content_type: 'image' },
+        { title: text, institution: text, file_path: filePath, content_type: 'image' },
       ]);
     } else if (uploadType === 'text') {
       // Handle text upload
       await supabase.from('uploads').insert([
-        { title: text, institution: text, user_id: user.id, content: text, content_type: 'text' },
+        { title: text, institution: text, content: text, content_type: 'text' },
       ]);
     }
 

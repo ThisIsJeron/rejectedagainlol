@@ -34,7 +34,7 @@ const Header = () => {
   return (
     <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
       <Link href="/">
-        <span className="text-xl font-bold cursor-pointer">Website Title</span>
+        <span className="text-xl font-bold cursor-pointer">RejectedAGAIN.lol</span>
       </Link>
       <nav>
         <Link href="/upload">
@@ -50,7 +50,7 @@ const Header = () => {
           </Link>
         )}
         */}
-        
+
       </nav>
     </header>
   );
