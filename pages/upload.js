@@ -26,6 +26,21 @@ const Upload = () => {
     }
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault(); // This is necessary to allow for the drop event to fire
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const selectedFile = e.dataTransfer.files[0];
+    if (selectedFile && ["image/png", "image/jpeg"].includes(selectedFile.type)) {
+      setFile(selectedFile);
+    } else {
+      alert('Please upload an image (png or jpg).');
+    }
+  };
+
+
   const handleUpload = async () => {
     if (!user) {
       alert('You must be logged in to upload.');
@@ -108,7 +123,12 @@ const Upload = () => {
             </div>
           )}
 
-          {/* Upload button logic here */}
+          <button
+            onClick={handleUpload}
+            className="w-full bg-green-400 hover:bg-green-600 text-white font-bold py-3 px-4 rounded"
+          >
+            Upload
+          </button>
         </div>
       </div>
     </div>
