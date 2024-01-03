@@ -7,10 +7,12 @@ const { session, user } = data
 
 
 const Upload = () => {
-  const [uploadType, setUploadType] = useState('text');
-  const [text, setText] = useState('');
-  const [file, setFile] = useState(null);
-  const [user, setUser] = useState(null);
+    const [uploadType, setUploadType] = useState('text');
+    const [text, setText] = useState('');
+    const [institution, setInstitution] = useState('');
+    const [date, setDate] = useState('');
+    const [file, setFile] = useState(null);
+    const [user, setUser] = useState(null);
 
   useEffect(() => {
     //const session = supabase.auth.session();
@@ -24,6 +26,18 @@ const Upload = () => {
     } else {
       alert('Please upload an image (png or jpg).');
     }
+  };
+
+  const handleTextChange = (e) => {
+    setText(e.target.value);
+  };
+
+  const handleInstitutionChange = (e) => {
+    setInstitution(e.target.value);
+  };
+
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
   };
 
   const handleDragOver = (e) => {
@@ -82,40 +96,38 @@ const Upload = () => {
       <Header />
       <div className="min-h-screen bg-green-500 flex flex-col items-center pt-8">
         <div className="w-full max-w-2xl bg-white p-8 rounded shadow-md">
-          <div className="mb-4">
-            <label className="inline-block mr-2">Text</label>
-            <input 
-              type="radio" 
-              name="uploadType" 
-              value="text" 
-              checked={uploadType === 'text'} 
-              onChange={() => setUploadType('text')} 
-            />
-            <label className="inline-block mr-2 ml-4">Image</label>
-            <input 
-              type="radio" 
-              name="uploadType" 
-              value="image" 
-              checked={uploadType === 'image'} 
-              onChange={() => setUploadType('image')} 
-            />
-          </div>
+          {/* ... toggle and other existing code */}
+
+          <input
+            type="text"
+            value={institution}
+            onChange={handleInstitutionChange}
+            placeholder="Institution Name"
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
+
+          <input
+            type="date"
+            value={date}
+            onChange={handleDateChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
 
           {uploadType === 'text' ? (
-            <textarea 
-              value={text} 
-              onChange={handleFileChange}
+            <textarea
+              value={text}
+              onChange={handleTextChange}
               className="w-full p-2 mb-4 border border-gray-300 rounded h-64"
               placeholder="Enter your text"
             />
           ) : (
-            <div 
+            <div
               className="w-full h-64 mb-4 border-2 border-dashed border-gray-300 rounded flex justify-center items-center"
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
               {file ? <p>File ready to upload: {file.name}</p> : <span className="text-gray-500">Drag an image here to upload</span>}
-              <input 
+              <input
                 type="file"
                 onChange={handleFileChange}
                 className="w-full h-full opacity-0"
