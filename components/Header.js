@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase'; // Adjust the path based on your file structure
 
+const { data, error } = await supabase.auth.refreshSession()
+const { session, user } = data
+
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    const session = supabase.auth.session();
+    
 
     if (session) {
       setLoggedIn(true);

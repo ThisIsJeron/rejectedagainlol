@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { supabase } from '../lib/supabase';
 
+const { data, error } = await supabase.auth.refreshSession()
+const { session, user } = data
+
+
 const Upload = () => {
   const [uploadType, setUploadType] = useState('text');
   const [text, setText] = useState('');
@@ -9,7 +13,7 @@ const Upload = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const session = supabase.auth.session();
+    //const session = supabase.auth.session();
     setUser(session?.user || null);
   }, []);
 
