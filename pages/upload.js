@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { supabase } from '../lib/supabase';
 
-const { data, error } = await supabase.auth.refreshSession()
-const { session, user } = data
+
 
 
 const Upload = () => {
@@ -15,9 +14,13 @@ const Upload = () => {
     const [user, setUser] = useState(null);
 
   useEffect(() => {
+    /*
+    const { data, error } = supabase.auth.refreshSession()
+    const { session, user } = data
     //const session = supabase.auth.session();
     setUser(session?.user || null);
   }, []);
+    */
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -56,10 +59,6 @@ const Upload = () => {
 
 
   const handleUpload = async () => {
-    if (!user) {
-      alert('You must be logged in to upload.');
-      return;
-    }
 
     if (uploadType === 'image' && file) {
       // Handle image upload

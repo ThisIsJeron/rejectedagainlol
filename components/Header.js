@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase'; // Adjust the path based on your file structure
 
-const { data, error } = await supabase.auth.refreshSession()
-const { session, user } = data
+
 
 const Header = () => {
+  /*
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
-
+  
   useEffect(() => {
-    
-
+    const { data, error } = supabase.auth.refreshSession()
+    const { session, user } = data
     setLoggedIn(!!session);
     if (session) {
       setUsername(session.user.email); // Adjust according to your user attribute
@@ -30,7 +30,7 @@ const Header = () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
-
+  */
   return (
     <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
       <Link href="/">
@@ -38,8 +38,10 @@ const Header = () => {
       </Link>
       <nav>
         <Link href="/upload">
-          <span className="text-lg hover:text-gray-300 mr-4 cursor-pointer">Upload</span>
+          <span className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload</span>
         </Link>
+        
+        {/* ... other nav links 
         {loggedIn ? (
           <span className="text-lg hover:text-gray-300 cursor-pointer">{username}</span>
         ) : (
@@ -47,6 +49,8 @@ const Header = () => {
             <span className="text-lg hover:text-gray-300 cursor-pointer">Login</span>
           </Link>
         )}
+        */}
+        
       </nav>
     </header>
   );
