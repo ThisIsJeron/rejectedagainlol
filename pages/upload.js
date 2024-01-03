@@ -13,15 +13,15 @@ const Upload = () => {
     const [file, setFile] = useState(null);
     const [user, setUser] = useState(null);
 
-  useEffect(() => {
     /*
+  useEffect(() => {
     const { data, error } = supabase.auth.refreshSession()
     const { session, user } = data
     //const session = supabase.auth.session();
     setUser(session?.user || null);
   }, []);
     */
-
+  
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile && ["image/png", "image/jpeg"].includes(selectedFile.type)) {
@@ -59,6 +59,12 @@ const Upload = () => {
 
 
   const handleUpload = async () => {
+    /*
+    if (!user) {
+      alert('You must be logged in to upload.');
+      return;
+    }
+    */
 
     if (uploadType === 'image' && file) {
       // Handle image upload
