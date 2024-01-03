@@ -1,27 +1,24 @@
-# Next + Netlify Starter
+# RejectedAgain.lol
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/46648482-644c-4c80-bafb-872057e51b6b/deploy-status)](https://app.netlify.com/sites/next-dev-starter/deploys)
+This project is a Next.js application designed for photo sharing and text posting, similar in functionality to platforms like Reddit and Instagram. It integrates with Supabase for backend services, including authentication, database, and storage. The application is set up for deployment on Netlify, showcasing server-side rendering and static generation capabilities of Next.js.
 
-This is a [Next.js](https://nextjs.org/) v14 project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) and set up to be instantly deployed to [Netlify](https://url.netlify.com/SyTBPVamO)!
+## Features
 
-This project is a very minimal starter that includes 2 sample components, a global stylesheet, a `netlify.toml` for deployment, and a `jsconfig.json` for setting up absolute imports and aliases. With Netlify, you'll have access to features like Preview Mode, server-side rendering/incremental static regeneration via Netlify Functions, and internationalized routing on deploy automatically.
+- **User Authentication**: Users can sign up and log in using their email and password, with authentication managed through Supabase Auth.
+- **Content Upload**: Users can upload either text or images. Images are stored in Supabase Storage, and references, along with text content, are stored in a Supabase table.
+- **Dynamic Content Rendering**: The homepage displays a timeline-like feed of posts with support for both image and text content.
+- **Responsive Layout**: Styled using Tailwind CSS for a modern and responsive user interface.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/next-netlify-starter&utm_source=github&utm_medium=nextstarter-cs&utm_campaign=devex-cs)
+## Key Components
 
-(If you click this button, it will create a new repo for you that looks exactly like this one, and sets that repo up immediately for deployment on Netlify)
-
-## Table of Contents:
-
-- [Getting Started](#getting-started)
-- [Installation options](#installation-options)
-- [Testing](#testing)
-  - [Included Default Testing](#included-default-testing)
-  - [Removing Renovate](#removing-renovate)
-  - [Removing Cypress](#removing-cypress)
+- `Header`: A responsive header that displays the user's email when logged in.
+- `Footer`: A simple footer component with a custom message.
+- `Login`: A page for user authentication, including login and registration functionality.
+- `Upload`: Allows authenticated users to upload either text or image content, with a toggle to select the content type.
 
 ## Getting Started
 
-First, run the development server:
+To run the development server:
 
 ```bash
 npm run dev
@@ -29,23 +26,25 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser to see the result. Edit pages/index.js to see auto-updating changes.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Installation
+### Manual clone:
 
-### Installation options
+1. Clone this repo.
+0. Navigate to the directory and run npm install or yarn install.
+0. Create a .env.local file at the root and add your Supabase credentials.
+0. Run npm run dev or yarn dev to start the development server.
 
-**Option one:** One-click deploy
+## Supabase Setup
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/next-netlify-starter&utm_source=github&utm_medium=nextstarter-cs&utm_campaign=devex-cs)
+Ensure the following are set up in your Supabase project:
 
-**Option two:** Manual clone
-
-1. Clone this repo: `git clone https://github.com/netlify-templates/next-netlify-starter.git`
-2. Navigate to the directory and run `npm install`
-3. Run `npm run dev`
-4. Make your changes
-5. Connect to [Netlify](https://url.netlify.com/Bk4UicocL) manually (the `netlify.toml` file is the one you'll need to make sure stays intact to make sure the export is done and pointed to the right stuff)
+- User authentication.
+- A storage bucket for image uploads.
+- A database table to store posts.
+## Deployment
+Configured for deployment on Netlify, leveraging serverless functions and edge capabilities for a full-stack experience.
 
 ## Testing
 
