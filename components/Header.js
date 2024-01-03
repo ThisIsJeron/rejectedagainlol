@@ -2,40 +2,36 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase'; // Adjust the path based on your file structure
 
-const { data, error } = await supabase.auth.refreshSession()
-const { session, user } = data
-
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    
+    const session = supabase.auth.session();
 
+    setLoggedIn(!!session);
     if (session) {
-      setLoggedIn(true);
-      setUsername(session.user.email); // or any other user attribute
+      setUsername(session.user.email); // Adjust according to your user attribute
     }
 
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setLoggedIn(!!session);
       if (session) {
-        setLoggedIn(true);
-        setUsername(session.user.email); // or any other user attribute
+        setUsername(session.user.email); // Adjust according to your user attribute
       } else {
-        setLoggedIn(false);
         setUsername('');
       }
     });
 
     return () => {
-      listener.unsubscribe();
+      authListener.unsubscribe();
     };
   }, []);
 
   return (
     <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <Link href="/"> 
-        <span className="text-xl font-bold cursor-pointer">RejectedAGAIN.lol</span>
+      <Link href="/">
+        <span className="text-xl font-bold cursor-pointer">Website Title</span>
       </Link>
       <nav>
         <Link href="/upload">
