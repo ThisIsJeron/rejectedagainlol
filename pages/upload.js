@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import { supabase } from '../lib/supabase';
 
 const Upload = () => {
-    const [uploadType, setUploadType] = useState('text');
+    const [uploadType, setUploadType] = useState('image');
     const [text, setText] = useState('');
     const [institution, setInstitution] = useState('');
     const [date, setDate] = useState('');
@@ -56,6 +56,14 @@ const Upload = () => {
 
   const handleUpload = async () => {
     try {
+      // Check if the date is in the future
+      const selectedDate = new Date(date);
+      const currentDate = new Date();
+      if (selectedDate > currentDate) {
+        alert('The date cannot be in the future.');
+        return;
+      }
+
       let insertData = {
         title: text, // Assuming you have a 'title' state or prop
         institution: institution, // Assuming you have an 'institution' state or prop
@@ -91,6 +99,7 @@ const Upload = () => {
       setFile(null);
       setText('');
       setInstitution('');
+      setDate('');
       alert('Upload successful');
     } catch (error) {
       console.error(error);
@@ -161,7 +170,7 @@ const Upload = () => {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              {file ? <p>File ready to upload: {file.name}</p> : <span className="text-gray-500 justify-center">Drag an image here to upload</span>}
+            {file ? <p>File ready to upload: {file.name}</p> : <span className="text-gray-500 text-center">Drag an image here to upload</span>}
               <input
                 type="file"
                 onChange={handleFileChange}
