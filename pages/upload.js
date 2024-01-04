@@ -65,10 +65,10 @@ const Upload = () => {
       }
 
       let insertData = {
-        title: text, // Assuming you have a 'title' state or prop
+        //title: text, // Assuming you have a 'title' state or prop
         institution: institution, // Assuming you have an 'institution' state or prop
-        content_type: uploadType,
-        created_at: new Date().toISOString(),
+        contentType: uploadType,
+        rejectionDate: selectedDate,
       };
   
       if (uploadType === 'image' && file) {
