@@ -54,9 +54,11 @@ const Header = () => {
         <span className="text-xl font-bold cursor-pointer">RejectedAGAIN.lol</span>
       </Link>
       <nav className="flex items-center">
+        {/* ... other nav links 
         <button onClick={handleThemeToggle} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </button>
+        */}
         <Link href="/upload">
           <span className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload</span>
         </Link>

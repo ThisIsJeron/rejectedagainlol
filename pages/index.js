@@ -70,20 +70,22 @@ const Home = () => {
                 alt={post.title} />
             </a>
             <div className="p-6">
+							{/* 
               <h5 className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
                 {post.title}
               </h5>
-              <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
+							*/}
+              <p className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
                 Institution: {post.institution}
               </p>
               <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
-                Institution: {post.date}
+                Date of Rejection: {post.date}
               </p>
             </div>
             <div className="mt-auto border-t-2 border-neutral-100 px-6 py-3 text-center dark:border-neutral-600 dark:text-neutral-50">
               <div className="mt-2">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  <img src="/oof.svg" alt="React" className="w-4 h-4" /> oof
+                  <img src="/oof.svg" className="w-6 h-6" /> oof
                 </button>
               </div>
             </div>
