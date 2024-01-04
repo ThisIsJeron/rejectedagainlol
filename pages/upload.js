@@ -47,83 +47,91 @@ const Upload = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     const selectedFile = e.dataTransfer.files[0];
-    if (selectedFile && ["image/png", "image/jpeg"].includes(selectedFile.type)) {
+    if (selectedFile && ["image/png", "image/jpeg", "image/webp"].includes(selectedFile.type)) {
       setFile(selectedFile);
     } else {
-      alert('Please upload an image (png or jpg).');
+      alert('Please upload an image (png, jpg, webp).');
     }
   };
 
 
   const handleUpload = async () => {
-    /*
-    if (!user) {
-      alert('You must be logged in to upload.');
-      return;
-    }
-    */
-
-    if (uploadType === 'image' && file) {
-      // Handle image upload
-      const fileExt = file.name.split('.').pop();
-      //const fileName = `${Math.random()}.${fileExt}`;
-
-      const filePath = `${fileName}`;
-
-      let { error: uploadError } = await supabase.storage.from('uploads').upload(filePath, file);
-
-      if (uploadError) {
-        console.error('Error uploading file:', uploadError);
-        return;
+    try {
+      if (uploadType === 'image' && file) {
+        // Handle image upload
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+  
+        let { error: uploadError, data } = await supabase.storage.from('uploads').upload(filePath, file);
+  
+        if (uploadError) {
+          throw new Error(`Error uploading file: ${uploadError.message}`);
+        }
+  
+        // Insert record into 'uploads' table
+        const { error: insertError } = await supabase.from('uploads').insert([
+          { title: text, institution: text, file_path: filePath, content_type: 'image' },
+        ]);
+  
+        if (insertError) {
+          throw new Error(`Error saving file info: ${insertError.message}`);
+        }
+      } else if (uploadType === 'text') {
+        // Handle text upload
+        const { error: textError } = await supabase.from('uploads').insert([
+          { id: Math.floor(Math.random() * 256) - 128, institution: text, content: text },
+        ]);
+  
+        if (textError) {
+          throw new Error(`Error uploading text: ${textError.message}`);
+        }
       }
-
-      // Insert record into 'uploads' table
-      await supabase.from('uploads').insert([
-        { title: text, institution: text, file_path: filePath, content_type: 'image' },
-      ]);
-    } else if (uploadType === 'text') {
-      // Handle text upload
-      await supabase.from('uploads').insert([
-        {  id: Math.floor(Math.random() * 256) - 128, institution: text, content: text },
-        
-      ]);
+  
+      // Reset form
+      setFile(null);
+      setText('');
+      alert('Upload successful');
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
-
-    // Reset form
-    setFile(null);
-    setText('');
-    alert('Upload successful');
   };
+  
 
   return (
     <div>
       <Header />
       <div className="min-h-screen bg-green-500 flex flex-col items-center pt-8">
         <div className="w-full max-w-2xl bg-white p-8 rounded shadow-md">
-          <div className="flex mb-4">
-            <label className="flex items-center mr-4">
-              <input 
+
+            {/* Tabbed Radio Buttons */}
+            <div className="flex mb-4 border-b">
+            <label className={`flex items-center pb-2 mr-4 cursor-pointer ${uploadType === 'text' ? 'border-b-2 border-green-600' : ''}`}>
+                <input 
                 type="radio" 
                 name="uploadType" 
                 value="text" 
                 checked={uploadType === 'text'} 
                 onChange={() => setUploadType('text')}
-                className="form-radio h-4 w-4 text-green-600"
-              />
-              <span className="ml-2">Text</span>
+                className="form-radio h-4 w-4 text-green-600 hidden"
+                />
+                <span className="ml-2">Text</span>
             </label>
-            <label className="flex items-center">
-              <input 
+            <label className={`flex items-center pb-2 cursor-pointer ${uploadType === 'image' ? 'border-b-2 border-green-600' : ''}`}>
+                <input 
                 type="radio" 
                 name="uploadType" 
                 value="image" 
                 checked={uploadType === 'image'} 
                 onChange={() => setUploadType('image')} 
-                className="form-radio h-4 w-4 text-green-600"
-              />
-              <span className="ml-2">Image</span>
+                className="form-radio h-4 w-4 text-green-600 hidden"
+                />
+                <span className="ml-2">Image</span>
             </label>
-          </div>
+            </div>
+
+          
   
           <input
             type="text"

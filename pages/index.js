@@ -29,11 +29,15 @@ const Home = () => {
   ];
 
   return (
+
+    
     <div className="min-h-screen bg-gray-100">
       <Header />
       <div className="container mx-auto py-8">
         {posts.map(post => (
-          <div key={post.id} className="flex items-start max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+          
+          
+          <div key={post.id} className="max-w-none rounded overflow-hidden shadow-lg">
             <img
               className="w-48 h-48 object-cover rounded-l-lg"
               src={post.imageUrl}
@@ -50,6 +54,8 @@ const Home = () => {
               </button>
             </div>
           </div>
+
+
         ))}
       </div>
     </div>
