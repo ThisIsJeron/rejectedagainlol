@@ -59,23 +59,28 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-      <div className="container mx-auto py-8 flex flex-wrap">
+      <div className="grid grid-cols-1 sm:grid md:grid-cols-3">
         {posts.map(post => (
-          <div key={post.id} className="w-full md:w-1/2 px-2 mb-4">
-            <div className="max-w-sm mx-auto rounded shadow-lg">
+          <div key={post.id} className="mx-3 mt-6 flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 sm:shrink-0 sm:grow sm:basis-0">
+            <a href="#!">
               <img
-                className="object-cover rounded-l-lg w-full"
+                className="rounded-t-lg"
                 src={post.imageUrl}
-                alt={post.title}
-              />
-              <div className="p-4 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-                  <p className="text-gray-700 mb-2">Institution: {post.institution}</p>
-                  <p className="text-gray-600 text-sm">Date: {post.date}</p>
-                </div>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  <img src="/oof.svg" alt="React" className="w-4 h-4" /> oof
+                alt={post.title} />
+            </a>
+            <div className="p-6">
+              <h5 className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
+                {post.title}
+              </h5>
+              <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
+                Institution: {post.institution}
+              </p>
+            </div>
+            <div className="mt-auto border-t-2 border-neutral-100 px-6 py-3 text-center dark:border-neutral-600 dark:text-neutral-50">
+              <small>Last updated 3 mins ago</small>
+              <div className="mt-2">
+                <button className="text-gray-500 hover:text-gray-700">
+                  <img src="/img/oof.svg" alt="React" className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -84,6 +89,7 @@ const Home = () => {
       </div>
     </div>
   );
+  
   
 };
 

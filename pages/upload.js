@@ -54,7 +54,6 @@ const Upload = () => {
     }
   };
 
-
   const handleUpload = async () => {
     try {
       if (uploadType === 'image' && file) {
@@ -131,8 +130,6 @@ const Upload = () => {
             </label>
             </div>
 
-          
-  
           <input
             type="text"
             value={institution}
