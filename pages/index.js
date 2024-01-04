@@ -2,6 +2,8 @@ import React from 'react';
 import Header from '../components/Header';
 
 const Home = () => {
+
+  
   // Expanded static data to include three example posts
   const posts = [
     {
@@ -53,7 +55,6 @@ const Home = () => {
       institution: "Anyscale",
       date: "2023-01-03",
     }
-    // ... add more posts as needed
   ];
 
   return (
@@ -75,12 +76,14 @@ const Home = () => {
               <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
                 Institution: {post.institution}
               </p>
+              <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
+                Institution: {post.date}
+              </p>
             </div>
             <div className="mt-auto border-t-2 border-neutral-100 px-6 py-3 text-center dark:border-neutral-600 dark:text-neutral-50">
-              <small>Last updated 3 mins ago</small>
               <div className="mt-2">
-                <button className="text-gray-500 hover:text-gray-700">
-                  <img src="/img/oof.svg" alt="React" className="w-4 h-4" />
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  <img src="/oof.svg" alt="React" className="w-4 h-4" /> oof
                 </button>
               </div>
             </div>
