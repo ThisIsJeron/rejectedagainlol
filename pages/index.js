@@ -33,13 +33,11 @@ const Home = () => {
     
     <div className="min-h-screen bg-gray-100">
       <Header />
-      <div className="container mx-auto py-8">
-        {posts.map(post => (
-          
-          
-          <div key={post.id} className="max-w-none rounded overflow-hidden shadow-lg">
+      <div className="container mx-auto py-8 flex flex-wrap mb-4">
+        {posts.map(post => (  
+          <div key={post.id} className="w-1/2 max-w-none rounded shadow-lg mb-4">
             <img
-              className="w-48 h-48 object-cover rounded-l-lg"
+              className="object-cover rounded-l-lg"
               src={post.imageUrl}
               alt={post.title}
             />
@@ -50,12 +48,10 @@ const Home = () => {
                 <p className="text-gray-600 text-sm">Date: {post.date}</p>
               </div>
               <button className="text-gray-500 hover:text-gray-700">
-                👍 React
+                <img src="/img/oof.svg" alt="React" className="w-4 h-4" />
               </button>
             </div>
           </div>
-
-
         ))}
       </div>
     </div>
