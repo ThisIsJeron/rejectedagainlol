@@ -31,6 +31,27 @@ const Home = () => {
       imageUrl: "/img/3.jpg", // Replace with actual image URL
       institution: "Anyscale",
       date: "2023-01-03",
+    },
+    {
+      id: 1,
+      title: "Post Title 1",
+      imageUrl: "/img/1.jpg", // Replace with actual image URL
+      institution: "Palantir",
+      date: "2023-01-01",
+    },
+    {
+      id: 2,
+      title: "Post Title 2",
+      imageUrl: "/img/2.jpg", // Replace with actual image URL
+      institution: "Otter.ai",
+      date: "2023-01-02",
+    },
+    {
+      id: 3,
+      title: "Post Title 3",
+      imageUrl: "/img/3.jpg", // Replace with actual image URL
+      institution: "Anyscale",
+      date: "2023-01-03",
     }
     // ... add more posts as needed
   ];
@@ -53,8 +74,8 @@ const Home = () => {
                   <p className="text-gray-700 mb-2">Institution: {post.institution}</p>
                   <p className="text-gray-600 text-sm">Date: {post.date}</p>
                 </div>
-                <button className="text-gray-500 hover:text-gray-700">
-                  <img src="/oof.svg" alt="React" className="w-4 h-4" />
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  <img src="/oof.svg" alt="React" className="w-4 h-4" /> oof
                 </button>
               </div>
             </div>
