@@ -83,14 +83,14 @@ const Upload = () => {
           throw new Error(`Error uploading file: ${uploadError.message}`);
         }
         
-        insertData.image_url = uploadData.Key; // Set image URL
-        
+        insertData.imageUrl = uploadData.Key; // Set image URL
+
       } else if (uploadType === 'text') {
         insertData.content = text; // Set text content
       }
   
       // Insert record into 'uploads' table
-      const { error: insertError } = await supabase.from('uploads').insert([insertData]);
+      const { error: insertError } = await supabase.from('uploads').upsert([insertData]);
   
       if (insertError) {
         throw new Error(`Error saving upload info: ${insertError.message}`);
