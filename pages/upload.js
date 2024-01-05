@@ -77,13 +77,14 @@ const Upload = () => {
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;
   
-        let { error: uploadError, data } = await supabase.storage.from('uploads').upload(filePath, file);
+        let { error: uploadError, data: uploadData } = await supabase.storage.from('uploads').upload(filePath, file);
   
         if (uploadError) {
           throw new Error(`Error uploading file: ${uploadError.message}`);
         }
-  
-        insertData.image_url = filePath; // Set image URL
+        
+        insertData.image_url = uploadData.Key; // Set image URL
+        
       } else if (uploadType === 'text') {
         insertData.content = text; // Set text content
       }
@@ -108,7 +109,6 @@ const Upload = () => {
   };
   
   
-
   return (
     <div>
       <Header />
