@@ -76,14 +76,15 @@ const Upload = () => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.floor(Math.random() * 10000)}.${fileExt}`;
         const filePath = `public/${fileName}`;
-  
+
         let { error: uploadError, data: uploadData } = await supabase.storage.from('banana').upload(filePath, file);
+        
         alert(uploadData)
-        alert(uploadData.Key))
+        alert(uploadData.Key)
         if (uploadError) {
           throw new Error(`Error uploading file: ${uploadError.message}`);
         }
-        
+
         insertData.imageUrl = uploadData.Key; // Set image URL
 
       } else if (uploadType === 'text') {
