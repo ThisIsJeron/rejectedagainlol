@@ -75,9 +75,9 @@ const Upload = () => {
         // Handle image upload
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
+        const filePath = `public/${fileName}`;
   
-        let { error: uploadError, data: uploadData } = await supabase.storage.from('public/banana').upload(filePath, file);
+        let { error: uploadError, data: uploadData } = await supabase.storage.from('banana').upload(filePath, file);
   
         if (uploadError) {
           throw new Error(`Error uploading file: ${uploadError.message}`);
