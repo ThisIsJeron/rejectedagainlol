@@ -74,8 +74,8 @@ const Upload = () => {
       if (uploadType === 'image' && file) {
         // Handle image upload
         const fileExt = file.name.split('.').pop();
-        //const fileName = `1.${fileExt}`;
-        const filePath = `public/1.${fileExt}`;  
+        const fileName = `${Date.now()}-${Math.floor(Math.random() * 10000)}.${fileExt}`;
+        const filePath = `public/${fileName}`;
   
         let { error: uploadError, data: uploadData } = await supabase.storage.from('banana').upload(filePath, file);
         alert(uploadData)
