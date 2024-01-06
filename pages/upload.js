@@ -78,7 +78,8 @@ const Upload = () => {
         const filePath = `public/1.${fileExt}`;  
   
         let { error: uploadError, data: uploadData } = await supabase.storage.from('banana').upload(filePath, file);
-  
+        alert(uploadData)
+        alert(uploadData.Key))
         if (uploadError) {
           throw new Error(`Error uploading file: ${uploadError.message}`);
         }
