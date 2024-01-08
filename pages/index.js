@@ -57,15 +57,25 @@ const Home = () => {
     }
   ];
 
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const openImageModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
       <div className="grid grid-cols-1 sm:grid md:grid-cols-3">
         {posts.map(post => (
           <div key={post.id} className="mx-3 mt-6 flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 sm:shrink-0 sm:grow sm:basis-0">
-            <a href="#!">
+            <a href="#!" onClick={() => openImageModal(post.imageUrl)}>
               <img
-                className="rounded-t-lg"
+                className="rounded-t-lg cursor-pointer"
                 src={post.imageUrl}
                 alt={post.title} />
             </a>
@@ -92,6 +102,11 @@ const Home = () => {
           </div>
         ))}
       </div>
+      {selectedImage && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={closeImageModal}>
+          <img src={selectedImage} className="max-w-full max-h-full cursor-pointer" alt="Full Screen" />
+        </div>
+      )}
     </div>
   );
   
