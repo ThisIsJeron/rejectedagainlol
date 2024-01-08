@@ -78,14 +78,14 @@ const Upload = () => {
         const filePath = `public/${fileName}`;
 
         let { error: uploadError, data: uploadData } = await supabase.storage.from('banana').upload(filePath, file);
+
+        //const { data } = supabase.storage.from('banana').getPublicUrl(filePath)
         
-        alert(uploadData)
-        alert(uploadData.Key)
         if (uploadError) {
           throw new Error(`Error uploading file: ${uploadError.message}`);
         }
 
-        insertData.imageUrl = uploadData.Key; // Set image URL
+        insertData.imageUrl = supabase.storage.from('banana').getPublicUrl(filePath)
 
       } else if (uploadType === 'text') {
         insertData.content = text; // Set text content
