@@ -60,8 +60,32 @@ const Upload = () => {
       // Check if the date is in the future
       const selectedDate = new Date(date);
       const currentDate = new Date();
+
+
+      if (!institution.trim()) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      if (uploadType === 'text' && !text.trim()) {
+        alert('Please fill in all fields.');
+        return;
+      }
+      
+      if (isNaN(selectedDate.getTime())) {
+        alert('Please select a date.');
+        return;
+      }
+
       if (selectedDate > currentDate) {
         alert('The date cannot be in the future.');
+        return;
+      }
+
+      
+
+      if (uploadType === 'image' && !file) {
+        alert('Please select an image file.');
         return;
       }
 

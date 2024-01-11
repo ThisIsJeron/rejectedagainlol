@@ -13,7 +13,7 @@ const Home = () => {
   const fetchPosts = async () => {
     let { data: posts, error } = await supabase
       .from('uploads')
-      .select('id, content, imageUrl, institution, rejectionDate, oofs');
+      .select('id, content, imageUrl, institution, rejectionDate, oofs, content');
 
     if (error) console.error('Error loading posts', error);
     else setPosts(posts);
@@ -30,53 +30,43 @@ const Home = () => {
   };
 
   const incrementOofs = async (id) => {
-    // Get 'oofed' posts from local storage
     let oofedPosts = JSON.parse(localStorage.getItem('oofedPosts')) || [];
+    const isOofed = oofedPosts.includes(id);
   
-    // If the post has already been 'oofed', decrement 'oofs' and remove the post from 'oofedPosts'
-    if (oofedPosts.includes(id)) {
-      // Get the current 'oofs' count
-      const { data: currentPost, error: fetchError } = await supabase
-        .from('uploads')
-        .select('oofs')
-        .eq('id', id);
+    const { data: postData, error: postError } = await supabase
+      .from('uploads')
+      .select('oofs')
+      .eq('id', id)
+      .single();
   
-      if (fetchError) console.error('Error fetching post', fetchError);
-      else if (currentPost[0].oofs > 0) {
-        // Only decrement 'oofs' if it's greater than 0
-        const { data, error } = await supabase
-          .from('uploads')
-          .update({ oofs: -1 }, { increment: true })
-          .eq('id', id);
-  
-        if (error) console.error('Error decrementing oofs', error);
-        else {
-          fetchPosts(); // Refresh the posts data after decrementing
-  
-          // Remove the 'oofed' post from local storage
-          oofedPosts = oofedPosts.filter(oofedPostId => oofedPostId !== id);
-          localStorage.setItem('oofedPosts', JSON.stringify(oofedPosts));
-        }
-      }
-    } else {
-      // If the post has not been 'oofed', increment 'oofs' and add the post to 'oofedPosts'
-      const { data, error } = await supabase
-        .from('uploads')
-        .update({ oofs: 1 }, { increment: true })
-        .eq('id', id);
-  
-      if (error) console.error('Error incrementing oofs', error);
-      else {
-        fetchPosts(); // Refresh the posts data after incrementing
-  
-        // Add the 'oofed' post to local storage
-        oofedPosts.push(id);
-        localStorage.setItem('oofedPosts', JSON.stringify(oofedPosts));
-      }
+    if (postError) {
+      console.error('Error fetching post', postError);
+      return;
     }
+  
+    const newOofs = isOofed ? Math.max(0, postData.oofs - 1) : postData.oofs + 1;
+    const { error: updateError } = await supabase
+      .from('uploads')
+      .update({ oofs: newOofs })
+      .eq('id', id);
+  
+    if (updateError) {
+      console.error('Error updating oofs', updateError);
+      return;
+    }
+  
+    // Update the specific post in the state without refetching all posts
+    setPosts(posts.map(post => post.id === id ? { ...post, oofs: newOofs } : post));
+  
+    // Update local storage
+    if (isOofed) {
+      oofedPosts = oofedPosts.filter(oofedPostId => oofedPostId !== id);
+    } else {
+      oofedPosts.push(id);
+    }
+    localStorage.setItem('oofedPosts', JSON.stringify(oofedPosts));
   };
   
-
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
@@ -84,10 +74,17 @@ const Home = () => {
         {posts.map(post => (
           <div key={post.id} className="mx-3 mt-6 flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 sm:shrink-0 sm:grow sm:basis-0">
             <a href="#!" onClick={() => openImageModal(post.imageUrl)}>
-              <img
-                className="rounded-t-lg cursor-pointer"
-                src={post.imageUrl}
-                alt={post.title} />
+              {post.imageUrl ? (
+                <img
+                  className="rounded-t-lg cursor-pointer"
+                  src={post.imageUrl}
+                  alt={post.title} />
+              ) : (
+                <div className="mt-auto border-b-2 border-neutral-100 px-6 py-3 dark:border-neutral-600 dark:text-neutral-50">
+                  <p className="px-6 py-4 mb-2 text-2xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">{post.content}</p>
+                </div>
+                
+              )}
             </a>
             <div className="p-6">
 							{/* 
