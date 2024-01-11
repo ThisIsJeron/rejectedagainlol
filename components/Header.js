@@ -7,23 +7,25 @@ import { supabase } from '../lib/supabase'; // Adjust the path based on your fil
 const Header = () => {
   const darkMode = false;
   //const [darkMode, setDarkMode] = useState(false);
-
+  /*
   useEffect(() => {
     // Check for saved theme preference in localStorage
     const isDark = localStorage.getItem('theme') === 'dark';
     setDarkMode(isDark);
   }, []);
-
+  
   const handleThemeToggle = () => {
+    
     setDarkMode(!darkMode);
     localStorage.setItem('theme', !darkMode ? 'dark' : 'light');
+    
   };
-
+  
   useEffect(() => {
     // Apply the theme to the body element
     document.body.className = darkMode ? 'dark' : 'light';
   }, [darkMode]);
-  /*
+  
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   
