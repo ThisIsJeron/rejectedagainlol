@@ -5,7 +5,8 @@ import { supabase } from '../lib/supabase'; // Adjust the path based on your fil
 
 
 const Header = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const darkMode = false;
+  //const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     // Check for saved theme preference in localStorage
