@@ -1,61 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import Footer from '@components/Footer';
+import { supabase } from '../lib/supabase';
 
 const Home = () => {
-
+  const [posts, setPosts] = useState([]);
   
-  // Expanded static data to include three example posts
-  const posts = [
-    {
-      id: 1,
-      title: "Post Title 1",
-      imageUrl: "/img/1.jpg", // Replace with actual image URL
-      institution: "Palantir",
-      date: "2023-01-01",
-    },
-    {
-      id: 2,
-      title: "Post Title 2",
-      imageUrl: "/img/2.jpg", // Replace with actual image URL
-      institution: "Otter.ai",
-      date: "2023-01-02",
-    },
-    {
-      id: 3,
-      title: "Post Title 3",
-      imageUrl: "/img/3.jpg", // Replace with actual image URL
-      institution: "Anyscale",
-      date: "2023-01-03",
-    },
-    {
-      id: 3,
-      title: "Post Title 3",
-      imageUrl: "/img/3.jpg", // Replace with actual image URL
-      institution: "Anyscale",
-      date: "2023-01-03",
-    },
-    {
-      id: 1,
-      title: "Post Title 1",
-      imageUrl: "/img/1.jpg", // Replace with actual image URL
-      institution: "Palantir",
-      date: "2023-01-01",
-    },
-    {
-      id: 2,
-      title: "Post Title 2",
-      imageUrl: "/img/2.jpg", // Replace with actual image URL
-      institution: "Otter.ai",
-      date: "2023-01-02",
-    },
-    {
-      id: 3,
-      title: "Post Title 3",
-      imageUrl: "/img/3.jpg", // Replace with actual image URL
-      institution: "Anyscale",
-      date: "2023-01-03",
-    }
-  ];
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    let { data: posts, error } = await supabase
+      .from('uploads')
+      .select('id, content, imageUrl, institution, rejectionDate, oofs');
+
+    if (error) console.error('Error loading posts', error);
+    else setPosts(posts);
+  };
 
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -66,6 +28,54 @@ const Home = () => {
   const closeImageModal = () => {
     setSelectedImage(null);
   };
+
+  const incrementOofs = async (id) => {
+    // Get 'oofed' posts from local storage
+    let oofedPosts = JSON.parse(localStorage.getItem('oofedPosts')) || [];
+  
+    // If the post has already been 'oofed', decrement 'oofs' and remove the post from 'oofedPosts'
+    if (oofedPosts.includes(id)) {
+      // Get the current 'oofs' count
+      const { data: currentPost, error: fetchError } = await supabase
+        .from('uploads')
+        .select('oofs')
+        .eq('id', id);
+  
+      if (fetchError) console.error('Error fetching post', fetchError);
+      else if (currentPost[0].oofs > 0) {
+        // Only decrement 'oofs' if it's greater than 0
+        const { data, error } = await supabase
+          .from('uploads')
+          .update({ oofs: -1 }, { increment: true })
+          .eq('id', id);
+  
+        if (error) console.error('Error decrementing oofs', error);
+        else {
+          fetchPosts(); // Refresh the posts data after decrementing
+  
+          // Remove the 'oofed' post from local storage
+          oofedPosts = oofedPosts.filter(oofedPostId => oofedPostId !== id);
+          localStorage.setItem('oofedPosts', JSON.stringify(oofedPosts));
+        }
+      }
+    } else {
+      // If the post has not been 'oofed', increment 'oofs' and add the post to 'oofedPosts'
+      const { data, error } = await supabase
+        .from('uploads')
+        .update({ oofs: 1 }, { increment: true })
+        .eq('id', id);
+  
+      if (error) console.error('Error incrementing oofs', error);
+      else {
+        fetchPosts(); // Refresh the posts data after incrementing
+  
+        // Add the 'oofed' post to local storage
+        oofedPosts.push(id);
+        localStorage.setItem('oofedPosts', JSON.stringify(oofedPosts));
+      }
+    }
+  };
+  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -89,13 +99,16 @@ const Home = () => {
                 Institution: {post.institution}
               </p>
               <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
-                Date of Rejection: {post.date}
+                Date of Rejection: {post.rejectionDate}
               </p>
             </div>
             <div className="mt-auto border-t-2 border-neutral-100 px-6 py-3 text-center dark:border-neutral-600 dark:text-neutral-50">
-              <div className="mt-2">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  <img src="/oof.svg" className="w-6 h-6" /> oof
+              <div className="mt-2 flex items-center justify-center">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+                  onClick={() => incrementOofs(post.id)}
+                >
+                  <img src="/oof.svg" className="w-6 h-6 mr-1" /> count: {post.oofs}
                 </button>
               </div>
             </div>
@@ -107,6 +120,7 @@ const Home = () => {
           <img src={selectedImage} className="max-w-full max-h-full cursor-pointer" alt="Full Screen" />
         </div>
       )}
+      <Footer />
     </div>
   );
   

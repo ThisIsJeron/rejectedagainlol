@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
 
 const Upload = () => {
@@ -85,7 +86,7 @@ const Upload = () => {
           throw new Error(`Error uploading file: ${uploadError.message}`);
         }
 
-        insertData.imageUrl = supabase.storage.from('banana').getPublicUrl(filePath)
+        insertData.imageUrl = supabase.storage.from('banana').getPublicUrl(filePath).data.publicUrl;
 
       } else if (uploadType === 'text') {
         insertData.content = text; // Set text content
@@ -189,6 +190,7 @@ const Upload = () => {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   );  
 };

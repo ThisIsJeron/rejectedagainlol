@@ -49,7 +49,7 @@ const Header = () => {
   }, []);
   */
   return (
-    <header className={`${darkMode ? 'bg-gray-800' : 'bg-gray-100'} text-white p-4 flex justify-between items-center`}>
+    <header className={`${darkMode ? 'bg-gray-100' : 'bg-gray-800'} text-white p-4 flex justify-between items-center`}>
       <Link href="/">
         <span className="text-xl font-bold cursor-pointer">RejectedAGAIN.lol</span>
       </Link>
