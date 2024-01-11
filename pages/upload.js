@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const Upload = () => {
     const [uploadType, setUploadType] = useState('image');
@@ -11,12 +10,7 @@ const Upload = () => {
     const [date, setDate] = useState('');
     const [file, setFile] = useState(null);
     const [user, setUser] = useState(null);
-    const [recaptchaToken, setRecaptchaToken] = useState('');
 
-    const handleRecaptcha = (token) => {
-      setRecaptchaToken(token);
-    };
-    
     /*
   useEffect(() => {
     const { data, error } = supabase.auth.refreshSession()
@@ -67,11 +61,7 @@ const Upload = () => {
       const selectedDate = new Date(date);
       const currentDate = new Date();
 
-      if (!recaptchaToken) {
-        alert('Please complete the reCAPTCHA challenge.');
-        return;
-      }
-      
+
       if (!institution.trim()) {
         alert('Please fill in all fields.');
         return;
@@ -81,7 +71,7 @@ const Upload = () => {
         alert('Please fill in all fields.');
         return;
       }
-
+      
       if (isNaN(selectedDate.getTime())) {
         alert('Please select a date.');
         return;
@@ -92,12 +82,15 @@ const Upload = () => {
         return;
       }
 
+      
+
       if (uploadType === 'image' && !file) {
         alert('Please select an image file.');
         return;
       }
 
       let insertData = {
+        //title: text, // Assuming you have a 'title' state or prop
         institution: institution, // Assuming you have an 'institution' state or prop
         contentType: uploadType,
         rejectionDate: selectedDate,
@@ -110,6 +103,8 @@ const Upload = () => {
         const filePath = `public/${fileName}`;
 
         let { error: uploadError, data: uploadData } = await supabase.storage.from('banana').upload(filePath, file);
+
+        //const { data } = supabase.storage.from('banana').getPublicUrl(filePath)
         
         if (uploadError) {
           throw new Error(`Error uploading file: ${uploadError.message}`);
@@ -129,7 +124,6 @@ const Upload = () => {
       }
   
       // Reset form
-      setRecaptchaToken('');
       setFile(null);
       setText('');
       setInstitution('');
@@ -140,6 +134,7 @@ const Upload = () => {
       alert(error.message);
     }
   };
+  
   
   return (
     <div>
@@ -210,10 +205,6 @@ const Upload = () => {
               />
             </div>
           )}
-          <ReCAPTCHA
-              sitekey="6Lf0IU4pAAAAAHmbhPTuKJtxUYUNif00OLxMeCwI"
-              onChange={handleRecaptcha}
-          />
   
           <button
             onClick={handleUpload}
