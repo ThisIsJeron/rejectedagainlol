@@ -150,87 +150,85 @@ const Upload = () => {
     <div>
       <Header />
       <div className="min-h-screen flex flex-col items-center pt-8 bg-gray-100">
-        <form name="upload" method="post" data-netlify="true" data-netlify-recaptcha="true">
-          <div className="w-full max-w-2xl bg-white p-8 rounded shadow-md">
+        <div className="w-full max-w-2xl bg-white p-8 rounded shadow-md">
 
-              {/* Tabbed Radio Buttons */}
-              <div className="flex mb-4 border-b">
-                  <label className={`flex items-center pb-2 cursor-pointer ${uploadType === 'image' ? 'border-b-2 border-green-600' : ''}`}>
-                      <input 
-                      type="radio" 
-                      name="uploadType" 
-                      value="image" 
-                      checked={uploadType === 'image'} 
-                      onChange={() => setUploadType('image')} 
-                      className="form-radio h-4 w-4 text-green-600 hidden"
-                      />
-                      <span className="ml-2">Image</span>
-                  </label>
-                  <label className={`flex items-center pb-2 mr-4 cursor-pointer ${uploadType === 'text' ? 'border-b-2 border-green-600' : ''}`}>
-                      <input 
-                      type="radio" 
-                      name="uploadType" 
-                      value="text" 
-                      checked={uploadType === 'text'} 
-                      onChange={() => setUploadType('text')}
-                      className="form-radio h-4 w-4 text-green-600 hidden"
-                      />
-                      <span className="ml-2">Text</span>
-                  </label>
-              </div>
+            {/* Tabbed Radio Buttons */}
+            <div className="flex mb-4 border-b">
+                <label className={`flex items-center pb-2 cursor-pointer ${uploadType === 'image' ? 'border-b-2 border-green-600' : ''}`}>
+                    <input 
+                    type="radio" 
+                    name="uploadType" 
+                    value="image" 
+                    checked={uploadType === 'image'} 
+                    onChange={() => setUploadType('image')} 
+                    className="form-radio h-4 w-4 text-green-600 hidden"
+                    />
+                    <span className="ml-2">Image</span>
+                </label>
+                <label className={`flex items-center pb-2 mr-4 cursor-pointer ${uploadType === 'text' ? 'border-b-2 border-green-600' : ''}`}>
+                    <input 
+                    type="radio" 
+                    name="uploadType" 
+                    value="text" 
+                    checked={uploadType === 'text'} 
+                    onChange={() => setUploadType('text')}
+                    className="form-radio h-4 w-4 text-green-600 hidden"
+                    />
+                    <span className="ml-2">Text</span>
+                </label>
+            </div>
 
-            <input
-              type="text"
-              value={institution}
-              onChange={handleInstitutionChange}
-              placeholder="Institution Name"
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
+          <input
+            type="text"
+            value={institution}
+            onChange={handleInstitutionChange}
+            placeholder="Institution Name"
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
+  
+          <input
+            type="date"
+            value={date}
+            onChange={handleDateChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
+  
+          {uploadType === 'text' ? (
+            <textarea
+              value={text}
+              onChange={handleTextChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded h-64"
+              placeholder="Enter your text"
             />
-    
-            <input
-              type="date"
-              value={date}
-              onChange={handleDateChange}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-            />
-    
-            {uploadType === 'text' ? (
-              <textarea
-                value={text}
-                onChange={handleTextChange}
-                className="w-full p-2 mb-4 border border-gray-300 rounded h-64"
-                placeholder="Enter your text"
-              />
-            ) : (
-              <div
-                className="w-full h-64 mb-4 border-2 border-dashed border-gray-300 rounded flex justify-center items-center"
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-              >
-              {file ? <p>File ready to upload: {file.name}</p> : <span className="text-gray-500 text-center">Drag an image here to upload</span>}
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full h-full opacity-0"
-                />
-              </div>
-            )}
-            <HCaptcha
-              sitekey="c3416b97-5edb-4938-837d-fad66e7f5e0a"
-              onLoad={onLoad}
-              onVerify={setToken}
-              ref={captchaRef}
-            />
-
-    
-            <button
-              onClick={handleUpload}
-              className="w-full bg-green-400 hover:bg-green-600 text-white font-bold py-3 px-4 rounded"
+          ) : (
+            <div
+              className="w-full h-64 mb-4 border-2 border-dashed border-gray-300 rounded flex justify-center items-center"
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
             >
-              Upload
-            </button>
-          </div>
-        </form>
+            {file ? <p>File ready to upload: {file.name}</p> : <span className="text-gray-500 text-center">Drag an image here to upload</span>}
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="w-full h-full opacity-0"
+              />
+            </div>
+          )}
+          <HCaptcha
+            sitekey="c3416b97-5edb-4938-837d-fad66e7f5e0a"
+            onLoad={onLoad}
+            onVerify={setToken}
+            ref={captchaRef}
+          />
+
+  
+          <button
+            onClick={handleUpload}
+            className="w-full bg-green-400 hover:bg-green-600 text-white font-bold py-3 px-4 rounded"
+          >
+            Upload
+          </button>
+        </div>
       </div>
       <Footer />
     </div>
