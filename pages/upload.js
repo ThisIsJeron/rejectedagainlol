@@ -216,7 +216,6 @@ const Upload = () => {
           )}
           <HCaptcha
             sitekey="c3416b97-5edb-4938-837d-fad66e7f5e0a"
-            onLoad={onLoad}
             onVerify={setToken}
             ref={captchaRef}
           />

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase'; // Adjust the path based on your file structure
 
-
-
 const Header = () => {
   const darkMode = false;
   //const [darkMode, setDarkMode] = useState(false);
