@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const Upload = () => {
     const [uploadType, setUploadType] = useState('image');
@@ -10,6 +11,11 @@ const Upload = () => {
     const [date, setDate] = useState('');
     const [file, setFile] = useState(null);
     const [user, setUser] = useState(null);
+    const [recaptchaToken, setRecaptchaToken] = useState('');
+
+    const onReCAPTCHAChange = (token) => {
+        setRecaptchaToken(token);
+    };
 
     /*
   useEffect(() => {
@@ -56,6 +62,10 @@ const Upload = () => {
   };
 
   const handleUpload = async () => {
+    if (!recaptchaToken) {
+      alert('Please complete the reCAPTCHA challenge.');
+      return;
+    }
     try {
       // Check if the date is in the future
       const selectedDate = new Date(date);
@@ -81,8 +91,6 @@ const Upload = () => {
         alert('The date cannot be in the future.');
         return;
       }
-
-      
 
       if (uploadType === 'image' && !file) {
         alert('Please select an image file.');
@@ -128,6 +136,7 @@ const Upload = () => {
       setText('');
       setInstitution('');
       setDate('');
+      setRecaptchaToken('');
       alert('Upload successful');
     } catch (error) {
       console.error(error);
@@ -205,6 +214,11 @@ const Upload = () => {
                 />
               </div>
             )}
+            <ReCAPTCHA
+                sitekey="NEXT_PUBLIC_RECAPTCHA_SITE_KEY"
+                onChange={onReCAPTCHAChange}
+            />
+
     
             <button
               onClick={handleUpload}
