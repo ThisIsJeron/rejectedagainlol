@@ -5,19 +5,70 @@ import { supabase } from '../lib/supabase';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [updating, setUpdating] = useState(false);
   
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  const postsPerPage = 10; // Define how many posts to fetch per page
 
   const fetchPosts = async () => {
-    let { data: posts, error } = await supabase
-      .from('uploads')
-      .select('id, content, imageUrl, institution, rejectionDate, oofs, content');
+    setLoading(true);
+  
+    // Fetch top posts based on 'oofs'
+    let { data: topPosts, error: topPostsError } = await supabase
+        .from('uploads')
+        .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
+        .order('oofs', { ascending: false })
+        .limit(postsPerPage / 2)
+        .range((page - 1) * postsPerPage / 2, page * postsPerPage / 2 - 1);
+  
+    // Fetch new posts
+    let { data: newPosts, error: newPostsError } = await supabase
+        .from('uploads')
+        .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
+        .order('rejectionDate', { ascending: false })
+        .limit(postsPerPage / 2)
+        .range((page - 1) * postsPerPage / 2, page * postsPerPage / 2 - 1);
+  
+    if (topPostsError || newPostsError) {
+        console.error('Error loading posts', topPostsError || newPostsError);
+        setLoading(false);
+        return;
+    }
+  
+    // Create a Set to track unique post IDs
+    const uniquePostIds = new Set();
+  
+    // Combine top and new posts, filtering out duplicates
+    const combinedPosts = [...topPosts, ...newPosts].filter(post => {
+      const isUnique = !uniquePostIds.has(post.id);
+      uniquePostIds.add(post.id);
+      return isUnique;
+    });
+  
+    setPosts(prevPosts => [...prevPosts, ...combinedPosts]);
+    setHasMore(combinedPosts.length > 0);
+    setLoading(false);
+  };  
 
-    if (error) console.error('Error loading posts', error);
-    else setPosts(posts);
-  };
+  useEffect(() => {
+      fetchPosts();
+  }, [page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the user has scrolled to the bottom and if more posts are available
+      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || loading || !hasMore) {
+        return;
+      }
+      setPage(prevPage => prevPage + 1);
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, hasMore]);
+
 
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -30,6 +81,10 @@ const Home = () => {
   };
 
   const incrementOofs = async (id) => {
+    if (updating) return;  // Prevent further execution if already updating
+  
+    setUpdating(true);  // Set updating status to true
+  
     let oofedPosts = JSON.parse(localStorage.getItem('oofedPosts')) || [];
     const isOofed = oofedPosts.includes(id);
   
@@ -41,6 +96,7 @@ const Home = () => {
   
     if (postError) {
       console.error('Error fetching post', postError);
+      setUpdating(false);  // Reset updating status
       return;
     }
   
@@ -52,20 +108,22 @@ const Home = () => {
   
     if (updateError) {
       console.error('Error updating oofs', updateError);
+      setUpdating(false);  // Reset updating status
       return;
     }
   
-    // Update the specific post in the state without refetching all posts
     setPosts(posts.map(post => post.id === id ? { ...post, oofs: newOofs } : post));
   
-    // Update local storage
     if (isOofed) {
       oofedPosts = oofedPosts.filter(oofedPostId => oofedPostId !== id);
     } else {
       oofedPosts.push(id);
     }
     localStorage.setItem('oofedPosts', JSON.stringify(oofedPosts));
+  
+    setUpdating(false);  // Reset updating status
   };
+  
   
   return (
     <div className="min-h-screen bg-gray-100">
@@ -112,6 +170,7 @@ const Home = () => {
           </div>
         ))}
       </div>
+      {loading && hasMore && <div className="justify-center">Loading more posts...</div>}
       {selectedImage && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={closeImageModal}>
           <img src={selectedImage} className="max-w-full max-h-full cursor-pointer" alt="Full Screen" />
@@ -120,8 +179,6 @@ const Home = () => {
       <Footer />
     </div>
   );
-  
-  
 };
 
 export default Home;
