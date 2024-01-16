@@ -9,6 +9,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [isImageEnlarged, setIsImageEnlarged] = useState(false); // State to track image size
   
   const postsPerPage = 10; // Define how many posts to fetch per page
 
@@ -32,25 +33,27 @@ const Home = () => {
         .range((page - 1) * postsPerPage / 2, page * postsPerPage / 2 - 1);
   
     if (topPostsError || newPostsError) {
-        console.error('Error loading posts', topPostsError || newPostsError);
-        setLoading(false);
-        return;
+      console.error('Error loading posts', topPostsError || newPostsError);
+      setLoading(false);
+      return;
     }
   
-    // Create a Set to track unique post IDs
-    const uniquePostIds = new Set();
+    // Map to track unique posts
+    const uniquePostsMap = new Map();
   
-    // Combine top and new posts, filtering out duplicates
-    const combinedPosts = [...topPosts, ...newPosts].filter(post => {
-      const isUnique = !uniquePostIds.has(post.id);
-      uniquePostIds.add(post.id);
-      return isUnique;
+    // Combine top and new posts, keeping unique posts only
+    [...topPosts, ...newPosts].forEach(post => {
+      if (!uniquePostsMap.has(post.id)) {
+        uniquePostsMap.set(post.id, post);
+      }
     });
   
-    setPosts(prevPosts => [...prevPosts, ...combinedPosts]);
-    setHasMore(combinedPosts.length > 0);
+    const uniquePosts = Array.from(uniquePostsMap.values());
+  
+    setPosts(prevPosts => [...prevPosts, ...uniquePosts]);
+    setHasMore(uniquePosts.length > 0);
     setLoading(false);
-  };  
+  }; 
 
   useEffect(() => {
       fetchPosts();
@@ -69,11 +72,15 @@ const Home = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loading, hasMore]);
 
-
   const [selectedImage, setSelectedImage] = useState(null);
 
   const openImageModal = (imageUrl) => {
     setSelectedImage(imageUrl);
+    setIsImageEnlarged(false); // Reset to normal size when opening a new image
+  };
+
+  const toggleImageSize = () => {
+    setIsImageEnlarged(!isImageEnlarged); // Toggle between normal and enlarged size
   };
 
   const closeImageModal = () => {
@@ -176,17 +183,17 @@ const Home = () => {
       <div className="grid grid-cols-1 sm:grid md:grid-cols-3">
         {posts.map(post => (
           <div key={post.id} className="mx-3 mt-6 flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 sm:shrink-0 sm:grow sm:basis-0">
-            <a href="#!" onClick={() => openImageModal(post.imageUrl)}>
+            <a href="#!" onClick={() => openImageModal(post.imageUrl)} className="flex justify-center items-center">
               {post.imageUrl ? (
                 <img
-                  className="rounded-t-lg cursor-pointer"
+                  className="rounded-t-lg cursor-pointer max-w-full h-auto"
                   src={post.imageUrl}
-                  alt={post.title} />
+                  alt={post.title}
+                />
               ) : (
                 <div className="mt-auto border-b-2 border-neutral-100 px-6 py-3 dark:border-neutral-600 dark:text-neutral-50">
                   <p className="px-6 py-4 mb-2 text-2xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">{post.content}</p>
                 </div>
-                
               )}
             </a>
             <div className="p-6">
@@ -210,14 +217,24 @@ const Home = () => {
                 <button className="bg-white rounded" onClick={() => incrementReports(post.id)}>❗</button>
               </div>
             </div>
-
           </div>
         ))}
       </div>
       {loading && hasMore && <div className="justify-center">Loading more posts...</div>}
       {selectedImage && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={closeImageModal}>
-          <img src={selectedImage} className="max-w-full max-h-full cursor-pointer" alt="Full Screen" />
+        <div
+          className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={closeImageModal}
+        >
+          <img
+            src={selectedImage}
+            className={`max-w-full max-h-full cursor-pointer ${isImageEnlarged ? 'scale-150' : 'scale-150'}`}
+            alt="Full Screen"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent modal from closing when image is clicked
+              toggleImageSize();
+            }}
+          />
         </div>
       )}
       <Footer />
