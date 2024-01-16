@@ -123,7 +123,52 @@ const Home = () => {
   
     setUpdating(false);  // Reset updating status
   };
-  
+
+  const incrementReports = async (id) => {
+    setUpdating(true);  // Set updating status to true
+
+    let reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+    const isReported = reportedPosts.includes(id);
+
+    if (isReported) {
+      setUpdating(false);  // Reset updating status
+      return;  // If the post is already reported by the user, do nothing
+    }
+
+    const { data: postData, error: postError } = await supabase
+      .from('uploads')
+      .select('reports')
+      .eq('id', id)
+      .single();
+
+    if (postError) {
+      console.error('Error fetching post', postError);
+      setUpdating(false);  // Reset updating status
+      return;
+    }
+
+    const newReports = postData.reports + 1;
+    const { error: updateError } = await supabase
+      .from('uploads')
+      .update({ reports: newReports })
+      .eq('id', id);
+
+    if (updateError) {
+      console.error('Error updating reports', updateError);
+      setUpdating(false);  // Reset updating status
+      return;
+    }
+
+    // Add the post id to the reportedPosts array and save it in localStorage
+    reportedPosts.push(id);
+    localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
+
+    setPosts(posts.map(post => post.id === id ? { ...post, reports: newReports } : post));
+    setUpdating(false);  // Reset updating status
+    
+    // Show an alert
+    alert('Thank you for reporting this post.');
+};
   
   return (
     <div className="min-h-screen bg-gray-100">
@@ -145,11 +190,6 @@ const Home = () => {
               )}
             </a>
             <div className="p-6">
-							{/* 
-              <h5 className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
-                {post.title}
-              </h5>
-							*/}
               <p className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
                 Institution: {post.institution}
               </p>
@@ -158,15 +198,19 @@ const Home = () => {
               </p>
             </div>
             <div className="mt-auto border-t-2 border-neutral-100 px-6 py-3 text-center dark:border-neutral-600 dark:text-neutral-50">
-              <div className="mt-2 flex items-center justify-center">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
-                  onClick={() => incrementOofs(post.id)}
-                >
-                  <img src="/oof.svg" className="w-6 h-6 mr-1" /> count: {post.oofs}
-                </button>
+              <div className="flex items-center justify-between">
+                <div className="flex justify-center flex-grow">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+                    onClick={() => incrementOofs(post.id)}
+                  >
+                    <img src="/oof.svg" className="w-6 h-6 mr-1" /> count: {post.oofs}
+                  </button>
+                </div>
+                <button className="bg-white rounded" onClick={() => incrementReports(post.id)}>❗</button>
               </div>
             </div>
+
           </div>
         ))}
       </div>
