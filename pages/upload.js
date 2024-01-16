@@ -178,16 +178,24 @@ const Upload = () => {
                 </label>
             </div>
 
+          <label htmlFor="institution" className="block text-gray-700 text-sm font-bold mb-2">
+            Rejected by:
+          </label>
           <input
             type="text"
+            id="institution"
             value={institution}
             onChange={handleInstitutionChange}
-            placeholder="Institution Name"
+            placeholder="Institution"
             className="w-full p-2 mb-4 border border-gray-300 rounded"
           />
   
+          <label htmlFor="rejectionDate" className="block text-gray-700 text-sm font-bold mb-2">
+            Date of Rejection:
+          </label>
           <input
             type="date"
+            id="rejectionDate"
             value={date}
             onChange={handleDateChange}
             className="w-full p-2 mb-4 border border-gray-300 rounded"
