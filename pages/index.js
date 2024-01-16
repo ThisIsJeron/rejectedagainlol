@@ -10,27 +10,41 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [isImageEnlarged, setIsImageEnlarged] = useState(false); // State to track image size
-  
-  const postsPerPage = 10; // Define how many posts to fetch per page
+
 
   const fetchPosts = async () => {
+    if (!hasMore || loading) {
+      console.log("Fetch skipped: Either no more posts or already loading.");
+      return;
+    }
+  
+    console.log("Fetching posts for page:", page);
     setLoading(true);
+  
+    // Calculate the start and end indexes for fetching posts
+    const postsPerPage = 10; // Define how many posts to fetch per page
+    const startIndex = (page - 1) * postsPerPage;
+    const endIndex = page * postsPerPage - 1;
   
     // Fetch top posts based on 'oofs'
     let { data: topPosts, error: topPostsError } = await supabase
-        .from('uploads')
-        .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
-        .order('oofs', { ascending: false })
-        .limit(postsPerPage / 2)
-        .range((page - 1) * postsPerPage / 2, page * postsPerPage / 2 - 1);
+      .from('uploads')
+      .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
+      .order('oofs', { ascending: false })
+      .limit(postsPerPage / 2)
+      .range(startIndex, endIndex);
+  
+    console.log("Top posts fetched:", topPosts);
   
     // Fetch new posts
     let { data: newPosts, error: newPostsError } = await supabase
-        .from('uploads')
-        .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
-        .order('rejectionDate', { ascending: false })
-        .limit(postsPerPage / 2)
-        .range((page - 1) * postsPerPage / 2, page * postsPerPage / 2 - 1);
+      .from('uploads')
+      .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
+      .order('rejectionDate', { ascending: false })
+      .limit(postsPerPage / 2)
+      .range(startIndex, endIndex);
+  
+    console.log("New posts fetched:", newPosts);
   
     if (topPostsError || newPostsError) {
       console.error('Error loading posts', topPostsError || newPostsError);
@@ -38,10 +52,10 @@ const Home = () => {
       return;
     }
   
-    // Map to track unique posts
+    // Create a Map to track unique posts
     const uniquePostsMap = new Map();
   
-    // Combine top and new posts, keeping unique posts only
+    // Combine top and new posts, keeping only unique posts
     [...topPosts, ...newPosts].forEach(post => {
       if (!uniquePostsMap.has(post.id)) {
         uniquePostsMap.set(post.id, post);
@@ -49,28 +63,32 @@ const Home = () => {
     });
   
     const uniquePosts = Array.from(uniquePostsMap.values());
+    console.log("Combined unique posts:", uniquePosts);
   
-    setPosts(prevPosts => [...prevPosts, ...uniquePosts]);
-    setHasMore(uniquePosts.length > 0);
+    setPosts(prevPosts => [...new Set([...prevPosts, ...uniquePosts])]);
+    setHasMore(uniquePosts.length === postsPerPage);
     setLoading(false);
-  }; 
-
+  };  
+    
   useEffect(() => {
       fetchPosts();
   }, [page]);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Check if the user has scrolled to the bottom and if more posts are available
-      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || loading || !hasMore) {
-        return;
+      // Calculate the distance from the bottom of the page
+      const distanceFromBottom = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop);
+  
+      // Trigger the next page load if close to the bottom, and if more posts are available and not currently loading
+      if (distanceFromBottom < 100 && !loading && hasMore) {
+        setPage(prevPage => prevPage + 1);
       }
-      setPage(prevPage => prevPage + 1);
     };
   
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading, hasMore]);
+  }, [loading, hasMore, page]); // Add 'page' to the dependency array
+  
 
   const [selectedImage, setSelectedImage] = useState(null);
 
