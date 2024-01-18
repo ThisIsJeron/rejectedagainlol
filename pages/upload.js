@@ -12,6 +12,7 @@ const Upload = () => {
     const [file, setFile] = useState(null);
     const [token, setToken] = useState(null);
     const captchaRef = useRef(null);
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
     const onLoad = () => {
       // this reaches out to the hCaptcha JS API and runs the
@@ -36,6 +37,12 @@ const Upload = () => {
   
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
+
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Let's try to keep our file size less than 5MB please");
+      return;
+    }  
+
     if (selectedFile && ["image/png", "image/jpeg"].includes(selectedFile.type)) {
       setFile(selectedFile);
     } else {

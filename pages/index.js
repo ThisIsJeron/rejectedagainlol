@@ -6,90 +6,47 @@ import { supabase } from '../lib/supabase';
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 9;
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [isImageEnlarged, setIsImageEnlarged] = useState(false); // State to track image size
+  const [isNextDisabled, setIsNextDisabled] = useState(false);
 
-
-  const fetchPosts = async () => {
-    if (!hasMore || loading) {
-      console.log("Fetch skipped: Either no more posts or already loading.");
-      return;
-    }
-  
-    console.log("Fetching posts for page:", page);
+  const fetchPosts = async (page) => {
     setLoading(true);
-  
-    // Calculate the start and end indexes for fetching posts
-    const postsPerPage = 10; // Define how many posts to fetch per page
+    setIsNextDisabled(false); // Reset the disabled state
+
     const startIndex = (page - 1) * postsPerPage;
     const endIndex = page * postsPerPage - 1;
-  
-    // Fetch top posts based on 'oofs'
-    let { data: topPosts, error: topPostsError } = await supabase
+
+    let { data: posts, error } = await supabase
       .from('uploads')
-      .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
-      .order('oofs', { ascending: false })
-      .limit(postsPerPage / 2)
+      .select('*') // Adjust the fields according to your needs
+      .order('oofs', { ascending: false }) // Order by 'oofs' count
       .range(startIndex, endIndex);
-  
-    console.log("Top posts fetched:", topPosts);
-  
-    // Fetch new posts
-    let { data: newPosts, error: newPostsError } = await supabase
-      .from('uploads')
-      .select('id, content, imageUrl, institution, rejectionDate, oofs, content')
-      .order('rejectionDate', { ascending: false })
-      .limit(postsPerPage / 2)
-      .range(startIndex, endIndex);
-  
-    console.log("New posts fetched:", newPosts);
-  
-    if (topPostsError || newPostsError) {
-      console.error('Error loading posts', topPostsError || newPostsError);
-      setLoading(false);
-      return;
+
+    if (error) {
+      console.error('Error loading posts', error);
+    } else {
+      setPosts(posts);
+      // Disable the "Next" button if fewer posts are fetched than the posts per page
+      setIsNextDisabled(posts.length < postsPerPage);
     }
-  
-    // Create a Map to track unique posts
-    const uniquePostsMap = new Map();
-  
-    // Combine top and new posts, keeping only unique posts
-    [...topPosts, ...newPosts].forEach(post => {
-      if (!uniquePostsMap.has(post.id)) {
-        uniquePostsMap.set(post.id, post);
-      }
-    });
-  
-    const uniquePosts = Array.from(uniquePostsMap.values());
-    console.log("Combined unique posts:", uniquePosts);
-  
-    setPosts(prevPosts => [...new Set([...prevPosts, ...uniquePosts])]);
-    setHasMore(uniquePosts.length === postsPerPage);
+
     setLoading(false);
-  };  
-    
-  useEffect(() => {
-      fetchPosts();
-  }, [page]);
+  };
+
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Calculate the distance from the bottom of the page
-      const distanceFromBottom = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop);
-  
-      // Trigger the next page load if close to the bottom, and if more posts are available and not currently loading
-      if (distanceFromBottom < 100 && !loading && hasMore) {
-        setPage(prevPage => prevPage + 1);
-      }
-    };
-  
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading, hasMore, page]); // Add 'page' to the dependency array
-  
+    fetchPosts(currentPage);
+  }, [currentPage]);
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+  
   const [selectedImage, setSelectedImage] = useState(null);
 
   const openImageModal = (imageUrl) => {
@@ -150,50 +107,57 @@ const Home = () => {
   };
 
   const incrementReports = async (id) => {
+    // Confirm before reporting
+    const confirmReport = window.confirm("Are you sure you want to report this post?");
+    if (!confirmReport) {
+      return; // User clicked 'Cancel', so exit the function
+    }
+  
     setUpdating(true);  // Set updating status to true
-
+  
     let reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
     const isReported = reportedPosts.includes(id);
-
+  
     if (isReported) {
+      alert('You have already reported this post.');
       setUpdating(false);  // Reset updating status
       return;  // If the post is already reported by the user, do nothing
     }
-
+  
     const { data: postData, error: postError } = await supabase
       .from('uploads')
       .select('reports')
       .eq('id', id)
       .single();
-
+  
     if (postError) {
       console.error('Error fetching post', postError);
       setUpdating(false);  // Reset updating status
       return;
     }
-
+  
     const newReports = postData.reports + 1;
     const { error: updateError } = await supabase
       .from('uploads')
       .update({ reports: newReports })
       .eq('id', id);
-
+  
     if (updateError) {
       console.error('Error updating reports', updateError);
       setUpdating(false);  // Reset updating status
       return;
     }
-
+  
     // Add the post id to the reportedPosts array and save it in localStorage
     reportedPosts.push(id);
     localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
-
+  
     setPosts(posts.map(post => post.id === id ? { ...post, reports: newReports } : post));
     setUpdating(false);  // Reset updating status
     
-    // Show an alert
     alert('Thank you for reporting this post.');
-};
+  };
+  
   
   return (
     <div className="min-h-screen bg-gray-100">
@@ -237,6 +201,23 @@ const Home = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="flex justify-center my-8">
+        <button 
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="self-center">Page {currentPage}</span>
+        <button 
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={isNextDisabled}
+          className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
       {loading && hasMore && <div className="justify-center">Loading more posts...</div>}
       {selectedImage && (
