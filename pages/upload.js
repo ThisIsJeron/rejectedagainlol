@@ -22,6 +22,12 @@ const Upload = () => {
       captchaRef.current.execute();
     };
 
+    const resetCaptcha = () => {
+      if (captchaRef.current) {
+        captchaRef.current.resetCaptcha();
+      }
+    };
+
     useEffect(() => {
       if (token)
         console.log(`hCaptcha Token: ${token}`);
@@ -84,26 +90,31 @@ const Upload = () => {
 
       if (!institution.trim()) {
         alert('Please fill in all fields.');
+        resetCaptcha();
         return;
       }
 
       if (uploadType === 'text' && !text.trim()) {
         alert('Please fill in all fields.');
+        resetCaptcha();
         return;
       }
       
       if (isNaN(selectedDate.getTime())) {
         alert('Please select a date.');
+        resetCaptcha();
         return;
       }
 
       if (selectedDate > currentDate) {
         alert('The date cannot be in the future.');
+        resetCaptcha();
         return;
       }
 
       if (uploadType === 'image' && !file) {
         alert('Please select an image file.');
+        resetCaptcha();
         return;
       }
 
@@ -146,10 +157,13 @@ const Upload = () => {
       setText('');
       setInstitution('');
       setDate('');
+      resetCaptcha();
       alert('Upload successful');
+      
     } catch (error) {
       console.error(error);
       alert(error.message);
+      resetCaptcha();
     }
   };
   
