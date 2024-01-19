@@ -17,32 +17,26 @@ const Home = () => {
   const fetchPosts = async (page) => {
     setLoading(true);
     setIsNextDisabled(false); // Reset the disabled state
-  
+
     const startIndex = (page - 1) * postsPerPage;
     const endIndex = page * postsPerPage - 1;
-  
-    let { data: fetchedPosts, error } = await supabase
+
+    let { data: posts, error } = await supabase
       .from('uploads')
       .select('*') // Adjust the fields according to your needs
       .order('oofs', { ascending: false }) // Order by 'oofs' count
       .range(startIndex, endIndex);
-  
+
     if (error) {
       console.error('Error loading posts', error);
     } else {
-      // Check each post for content type and image URL
-      const processedPosts = fetchedPosts.filter(post => {
-        return post.contentType === 'image' && post.imageUrl?.includes("vnbbcisamffcphqmuzyt");
-      });
-  
-      setPosts(processedPosts);
+      setPosts(posts);
       // Disable the "Next" button if fewer posts are fetched than the posts per page
-      setIsNextDisabled(processedPosts.length < postsPerPage);
+      setIsNextDisabled(posts.length < postsPerPage);
     }
-  
+
     setLoading(false);
   };
-  
 
   useEffect(() => {
     fetchPosts(currentPage);
