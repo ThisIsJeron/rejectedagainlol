@@ -38,13 +38,13 @@ const Home = () => {
     setLoading(false);
   };
 
-
   useEffect(() => {
     fetchPosts(currentPage);
   }, [currentPage]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    window.scrollTo(0, 0);
   };
   
   const [selectedImage, setSelectedImage] = useState(null);
